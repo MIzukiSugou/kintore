@@ -30,20 +30,30 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 	@Override
 	public int checkLogin(UserMasterCondition userMasterCondition) {
 		String sql = "SELECT"
-				+ "    COUNT(*) "
+				+ "       COUNT(1) RECORD_COUNT "
 				+ "FROM"
-				+ "    USER_MANAGEMENT "
+				+ "       USER_MASTER UMT "
+				+ "       ,PASSWORD_MANAGEMENT PMT "
 				+ "WHERE"
-				+ "    USER_ID = :userId "
-				+ "    AND PASSWORD = :password "
-				+ "    AND ACCOUNT_LOCK_FLAG =  :accountLockFlagOff"
-				+ "    AND DELETE_FLAG = :deleteFlagOff";
-		
+				+ "       UMT.USER_ID = :userId "
+				+ "AND UMT.ACCOUNT_LOCK_FLAG = :accountLockFlagOff "
+				+ "AND UMT.DELETE_FLAG = :deleteFlagOff "
+				+ "AND UMT.USER_ID = PMT.USER_ID "
+				+ "AND PMT.PASSWORD = :password "
+				+ "AND PMT.DELETE_FLAG  = :deleteFlagOff "
+				+ "AND PMT.CHANGE_COUNT = "
+				+ "  (SELECT"
+				+ "        MAX(CHANGE_COUNT) "
+				+ "FROM"
+				+ "        PASSWORD_MANAGEMENT "
+				+ "WHERE"
+				+ "        USER_ID = :userId "
+				+ "AND DELETE_FLAG = :deleteFlagOff) ";
 		//sql条件
 		MapSqlParameterSource map = new MapSqlParameterSource()
 		.addValue("userId",userMasterCondition.getUserId())                              //ユーザーID 
-		.addValue("password",userMasterCondition.getPassword())                      //パスワード
 		.addValue("accountLockFlagOff",userMasterCondition.getAccountLockFlagOff()) //アカウントロックフラグ(0:OFF)
+		.addValue("password",userMasterCondition.getPassword())                      //パスワード
 		.addValue("deleteFlagOff",userMasterCondition.getDeleteFlagOff());                 // 削除フラグ(0:OFF)
 
 		int count = namedParameterJdbcTemplate.queryForObject(sql,map,int.class);
@@ -61,14 +71,13 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 	public UserMaster selectUser(UserMasterCondition userMasterCondition) {
 		String sql = "SELECT"
 				+ "    USER_ID"
-				+ "    , LAST_NAME"
-				+ "    , FIRST_NAME"
-				+ "    , AUTHORITY "
+				+ "    , LAST_NM"
+				+ "    , FIRST_NM "
 				+ "FROM"
-				+ "    USER_MANAGEMENT "
+				+ "    USER_MASTER "
 				+ "WHERE"
-				+ "    USER_ID = :userId "
-				+ "    AND DELETE_FLAG = :deleteFlgOff";
+				+ "    USER_ID = :userId"
+				+ "    AND DELETE_FLAG = :deleteFlagOff";
 		
 		//sql条件
 		MapSqlParameterSource map = new MapSqlParameterSource()
@@ -78,10 +87,9 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 		Map<String, Object> result = namedParameterJdbcTemplate.queryForMap(sql, map);
 
 		UserMaster userMaster= new UserMaster();
-
 		userMaster.setUserId((String) result.get("USER_ID"));
-		userMaster.setFirstName((String) result.get("FIRST_NAME"));
-		userMaster.setLastName((String) result.get("LAST_NAME"));
+		userMaster.setFirstName((String) result.get("FIRST_NM"));
+		userMaster.setLastName((String) result.get("LAST_NM"));
 
 		return userMaster;
 	}
@@ -93,11 +101,11 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 	 */
 	@Override
 	public void updateLoginFailure(UserMasterCondition userMasterCondition) {
-		String sql = "UPDATE USER_MANAGEMENT "
+		String sql = "UPDATE USER_MASTER "
 				+ "SET"
 				+ "    LOGIN_FAILURE_COUNT = CASE "
 				+ "        WHEN LOGIN_FAILURE_COUNT IS NULL "
-				+ "            THEN :loginFailureCount "
+				+ "            THEN :loginFailureCount"
 				+ "        ELSE (LOGIN_FAILURE_COUNT + :loginFailureCount) "
 				+ "        END"
 				+ "    , ACCOUNT_LOCK_FLAG = CASE "
@@ -109,10 +117,10 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 				+ "        ELSE :accountLockFlagOff "
 				+ "        END"
 				+ "    , UPDATE_DATE = NOW()"
-				+ "    , UPDATE_USER = :userId"
+				+ "    , UPDATE_USER = :userId "
 				+ "WHERE"
-				+ "    USER_ID = :userId"
-				+ "    AND DELETE_FLAG = :deleteFlgOff";
+				+ "    USER_ID = :userId "
+				+ "    AND DELETE_FLAG = :deleteFlagOff";
 		
 		//sql条件
 		MapSqlParameterSource map = new MapSqlParameterSource()
@@ -121,7 +129,7 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 		.addValue("accountLockFlagOn",userMasterCondition.getAccountLockFlagOn())           //アカウントロックフラグ(1:ON)
 		.addValue("accountLockFlagOff",userMasterCondition.getAccountLockFlagOff())          //アカウントロックフラグ(1:OFF)
 		.addValue("userId",userMasterCondition.getUserId())                                               //ユーザーID
-		.addValue("deleteFlgOff",userMasterCondition.getDeleteFlagOff()) ;                           //削除(0:OFF)
+		.addValue("deleteFlagOff",userMasterCondition.getDeleteFlagOff()) ;                           //削除(0:OFF)
 		
 		namedParameterJdbcTemplate.update(sql,map);
 	}
@@ -133,7 +141,7 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 	 */
 	@Override
 	public void updateLoginSuccess(UserMasterCondition userMasterCondition) {
-		String sql = "UPDATE USER_MANAGEMENT "
+		String sql = "UPDATE USER_MASTER "
 				+ "SET"
 				+ "    LAST_LOGIN_DATE = NOW()"
 				+ "    , LOGIN_COUNT = ( "
@@ -155,7 +163,7 @@ public class UserMasterRepositoryImpl implements UserMasterRepository {
 		.addValue("loginCount",userMasterCondition.getLoginCount())                                  //ログイン回数
 		.addValue("loginFailureCount",userMasterCondition.getLoginFailureCount())                //ログイン失敗回数 
 		.addValue("userId",userMasterCondition.getUserId())                                               //ユーザーID
-		.addValue("deleteFlgOff",userMasterCondition.getDeleteFlagOff()) ;                           //削除(0:OFF)
+		.addValue("deleteFlagOff",userMasterCondition.getDeleteFlagOff()) ;                           //削除(0:OFF)
 		
 		namedParameterJdbcTemplate.update(sql,map);
 	}

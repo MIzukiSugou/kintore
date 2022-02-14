@@ -26,13 +26,13 @@ public class UserMasterCondition {
 	private String deleteFlagOff;
 	
 	//ログイン失敗回数
-	private String loginFailureCount;
+	private int loginFailureCount;
 	
 	//ログイン失敗最大回数
-	private String loginFailureMaxCount;
+	private int loginFailureMaxCount;
 	
 	//ログイン回数
-	private String loginCount;
+	private int loginCount;
 	
 	public String getUserId() {
 		return userId;
@@ -82,28 +82,27 @@ public class UserMasterCondition {
 		this.deleteFlagOff = deleteFlagOff;
 	}
 
-	public String getLoginFailureCount() {
+	public int getLoginFailureCount() {
 		return loginFailureCount;
 	}
 
-	public void setLoginFailureCount(String loginFailureCount) {
+	public void setLoginFailureCount(int loginFailureCount) {
 		this.loginFailureCount = loginFailureCount;
 	}
 
-	public String getLoginFailureMaxCount() {
+	public int getLoginFailureMaxCount() {
 		return loginFailureMaxCount;
 	}
 
-	public void setLoginFailureMaxCount(String loginFailureMaxCount) {
+	public void setLoginFailureMaxCount(int loginFailureMaxCount) {
 		this.loginFailureMaxCount = loginFailureMaxCount;
 	}
 
-	public String getLoginCount() {
+	public int getLoginCount() {
 		return loginCount;
 	}
 
-	public void setLoginCount(String loginCount) {
+	public void setLoginCount(int loginCount) {
 		this.loginCount = loginCount;
 	}
-	
 }
