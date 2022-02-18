@@ -1,1 +1,1 @@
-web: java -war build/libs/gradle-getting-started-1.0.war
+web: java -jar build/libs/gradle-getting-started-1.0.war
