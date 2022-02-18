@@ -21,7 +21,7 @@ import com.sugo.mizuki.domain.service.LoginService;
  *
  */
 @Controller
-@RequestMapping(value = "/login")
+//@RequestMapping(value = "/login")※ローカル環境用
 public class LoginController {
 
 	@Autowired
@@ -39,7 +39,8 @@ public class LoginController {
 	 * @param model
 	 * @return 画面
 	 */
-	@RequestMapping(value = "/access", method = { RequestMethod.GET, RequestMethod.POST })
+//	@RequestMapping(value = "/access", method = { RequestMethod.GET, RequestMethod.POST })※ローカル環境用
+	@RequestMapping(value = "/")
 	public String getLogin(Model model) {
 
 		return "/login";
