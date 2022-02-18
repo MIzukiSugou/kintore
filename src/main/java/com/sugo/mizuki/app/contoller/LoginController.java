@@ -43,7 +43,7 @@ public class LoginController {
 	@RequestMapping(value = "/")
 	public String getLogin(Model model) {
 
-		return "/login";
+		return "login";
 	}
 	
 	/**
