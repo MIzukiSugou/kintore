@@ -5,9 +5,9 @@ plugins {
 	id 'war'
 }
 
-group = 'com.example'
-jar.baseName = 'gradle-getting-started'
-version = '1.0'
+group = 'com.sugo.mizuki'
+jar.baseName = 'kintore	'
+version = '1.0.0-BUILD-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
