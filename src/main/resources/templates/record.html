@@ -1,0 +1,81 @@
+<!-- 記録画面 -->
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link th:href="@{/css/record.css}" rel="stylesheet">
+
+    <div class="container">
+        <div class="card card-container">
+            <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+            <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" method="post" th:action="@{/login/execution}" th:object="${recordForm}">
+<!--             	<div align="left"> -->
+				<div>
+					<input id="calendar" type="date" name="calendar" max="9999-12-31" th:field="*{dateView}">
+					<input id="settingBtn" class="btn btn-lg btn-primary btn-signin" type="submit" name="setting" value="設定" />
+				</div>
+				 <div style="border: ridge; height: 420px; width: 1090px">
+					 <table class="table table-striped">
+					    <thead style="display: block;">
+					      <tr class="center">
+					      	<th style="width: 374.43px;">筋トレメニュー</th>
+							<th style="width: 93.14px;">重量</th>
+							<th style="width: 107.27px;">セット1</th>
+							<th style="width: 107.27px;">セット2</th>	
+							<th style="width: 107.27px;">セット3</th>
+							<th style="width: 107.27px;">セット4</th>
+							<th style="width: 107.27px;">セット5</th>
+							<th style="width: 107.27px;">セット6</th>
+							<th style="width: 107.27px;">合計</th>
+							<th style="width: 67.47px;">
+								<input id="recordBtn" class="btn btn-lg btn-primary  btn-signin" type="submit" name="records" value="記録" />    
+							</th>
+					      </tr>
+					    </thead>
+					    <tbody style="display: block; height: 360px; overflow-y: scroll">
+							<!-- サーバで設定されたデータを表示 -->
+							<tr th:each="recordListForm,stat : *{recordList}">   
+							
+								<!-- listの最終行のみ表示 -->
+								<th:block th:if="*{#lists.size(recordList)-1} == ${stat.index}" >
+									<td style="width: 374.43px;" class="center">
+										<select id="menu" name="menu">
+											<option th:each="menu: *{recordList[__${stat.index}__].menuMap}" th:value="${menu.value}" th:inline="text">[[${menu.value}]]</option>
+										</select>
+										<button id="menuInputButton" type="submit" class="btn btn-lg btn-primary btn-block btn-signin" name="add">追加</button>
+									</td>
+								</th:block>
+								
+								<!-- listの最終行以外表示 -->	
+								<th:block th:if="*{#lists.size(recordList)-1} != ${stat.index}" >
+									<td style="width: 374.43px;" class="center" th:text="*{recordList[__${stat.index}__].menu}"></td>
+									<td style="width: 93.14px;" class="center"><input size="2" type="text" th:field="*{recordList[__${stat.index}__].weight}" />kg</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st1_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st1}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st2_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st2}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st3_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st3}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st4_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st4}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st5_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st5}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_st6_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].st6}" />回</td>		        
+									<td style="width: 107.27px;" class="center"><input th:id="add_total_+${stat.index}" size="2" type="text" th:field="*{recordList[__${stat.index}__].sum}" />回</td>
+									<td style="width: 67.47px;" class="center">
+										<button type="submit" class="btn btn-lg btn-primary btn-block btn-signin" name="deleteAdd" th:value="${stat.index}">削除</button>
+									</td>						
+								</th:block>	
+						
+								<!-- hidden項目-->		        
+								<td style='display	:none;'>		       
+									<input type="hidden" th:field="*{recordList[__${stat.index}__].menu}" />	
+									<input type="hidden" th:field="*{recordList[__${stat.index}__].menuKey}" />
+									<input type="hidden" th:id="deleteFlg_+${stat.index}" th:field="*{recordList[__${stat.index}__].deleteFlg}">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+            </form><!-- /form -->
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+</html>

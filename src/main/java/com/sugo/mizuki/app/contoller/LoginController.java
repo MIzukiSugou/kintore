@@ -21,7 +21,6 @@ import com.sugo.mizuki.domain.service.LoginService;
  *
  */
 @Controller
-//@RequestMapping(value = "/login")※ローカル環境用
 public class LoginController {
 
 	@Autowired
@@ -32,16 +31,15 @@ public class LoginController {
 		LoginForm form = new LoginForm();
 		return form;
 	}
-
+	
 	/**
 	 * ログイン画面表示処理
 	 * 
 	 * @param model
-	 * @return 画面
+	 * @return ログイン画面
 	 */
-//	@RequestMapping(value = "/access", method = { RequestMethod.GET, RequestMethod.POST })※ローカル環境用
-	@RequestMapping(value = "/")
-	public String getLogin(Model model) {
+	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
+	public String init(Model model) {
 
 		return "login";
 	}
@@ -56,30 +54,30 @@ public class LoginController {
 	 * @param session セッション情報
 	 * @return ログイン画面/メニュー画面
 	 */
-	@RequestMapping(value = "/execution", method = RequestMethod.POST)
+	@RequestMapping(value = "login/execution", method = RequestMethod.POST)
 	public String login(@Validated LoginForm form, BindingResult result, Model model,
 			RedirectAttributes redirectAttridutes, HttpSession session) {
 
 		// 入力チェック
 		if (result.hasErrors()) {
 			// 入力エラーの場合
-			return "/login";
+			return "login";
 		}
 
 		//ログインID存在チェック
 		if (!loginService.checkInput(form)) {
 			//存在しない場合
-			return "/login";
+			return "login";
 		} else {
 			//存在した場合
 			// ログイン処理実行
 			if (loginService.executeLogin(form, session)) {
 				// 取得成功の場合
-				return "/test";
+				return "forward:/record/access";
 				//return "forward:/calendarrecord/access";
 			} else {
 				// 取得エラーの場合
-				return "/login";
+				return "login";
 			}
 		}
 	}

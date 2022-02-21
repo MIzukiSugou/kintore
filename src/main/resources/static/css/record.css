@@ -11,8 +11,8 @@ body, html {
 }
 
 .card-container.card {
-    max-width: 350px;
-/*     padding: 40px 40px; */
+    max-width: 1200px;
+/*     padding: 500px 500px; */
 }
 
 .btn {
@@ -110,7 +110,7 @@ body, html {
     /*background-color: #4d90fe; */
     background-color: rgb(104, 145, 162);
     /* background-color: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));*/
-    padding: 0px;
+    padding: 5px;
     font-weight: 700;
     font-size: 14px;
     height: 36px;
